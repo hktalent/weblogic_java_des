@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="makeJar">
+
+	<condition property="using.ext.props">
+		<isset property="build.props.file" />
+	</condition>
+	<property name="build.properties" value="${build.props.file}" />
+	<property file="${build.properties}" />
+	<property name="rootPath" value="." />
+	<property name="workingCopy" location="." />
+	<tstamp>
+		<format property="m_version" pattern="yyyyMMdd_hhmmss" />
+	</tstamp>
+	<property name="version" value="${m_version}" />
+	<!-- 设定需要用户的属性文件 -->
+	<property file="build.properties" />
+
+	<!-- 设定编译文件目标 -->
+	<property name="build" value="./build" />
+	<property name="PVer" value="1.0" />
+	<property name="JreVer" value="1.6" />
+	<!-- 设定源代码文件路径 -->
+	<property name="src.core" value="javacode" />
+
+	<!-- 设定lib所在的路径 -->
+	<property name="lib" value="./lib" />
+	<property name="jaraName" value="./bin/jfxl.jar" />
+	<tstamp>
+		<format property="TODAY" pattern="yyyy-MM-dd hh: mm " locale="en" />
+	</tstamp>
+
+	<!-- 设定工程依赖的jar包 
+	-->
+	<path id="project.class.path">
+		<fileset file="/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/*.jar" />
+		<fileset file="${lib}/*.jar" />
+	</path>
+
+	<!-- 初始化任务 如果要checkout就加： depends="checkoutLatest" -->
+	<target name="init">
+		<tstamp />
+		<echo message="开始执行: init" />
+		<echo message="当前版本日期 ${version}" />
+		<echo message="删除文件夹：${build}" />
+		<delete dir="${build}" />
+		<delete file="${jaraName}" />
+		<echo message="创建文件夹：${build}" />
+		<mkdir dir="${build}" />
+	</target>
+	<target name="myjavac" depends="init">
+		<javac includeAntRuntime="no"
+			bootclasspathref="project.class.path" 
+			verbose="no" includeantruntime="on" 
+			debug="false" optimize="true" 
+			deprecation="false" nowarn="true" 
+			source="${JreVer}" destdir="${build}" 
+			encoding="UTF-8" fork="true" target="${JreVer}">
+			<compilerarg value="-Xlint:unchecked" />
+			<compilerarg value="-Xlint:deprecation" />
+			<compilerarg value="-Xmaxerrs" />
+			<compilerarg value="100" />
+			<compilerarg value="-Xmaxwarns" />
+			<compilerarg value="1" />
+			
+			<src path="${src.core}" />
+			<classpath refid="project.class.path" />
+		</javac>
+
+		<copy todir="${build}" file="change.txt"/>
+		<copy todir="${build}">
+			<fileset dir="${src.core}">
+				<include name="**/*class" />
+				<include name="**/*properties" />
+				<exclude name="${build}/**" />
+				<exclude name="*.svn/" />
+				<exclude name="**/*.java" />
+				<exclude name="**/*.bak" />
+				<exclude name="**/web-fragment.xml" />
+			</fileset>
+		</copy>
+
+		<jar jarfile="${jaraName}" basedir="${build}" />
+	</target>
+
+	<target name="makeJar" depends="myjavac">
+		<delete file="${jaraName}" />
+		<delete file="${build}/build.xml" />
+		<delete file="${build}/Math.xml" />
+		<jar jarfile="${jaraName}" basedir="${build}" update="yes" level="9">
+			<zipfileset src="lib/WebLogic_EXP.jar" />
+			<zipfileset src="lib/SafeGene.jar" />
+			<manifest>
+				<attribute name="Bundle-Name" value="巅狼团队 mtx_tianxia" />
+				<attribute name="Created-By" value="巅狼团队 mtx_tianxia ${TODAY}" />
+				<attribute name="Bundle-SymbolicName" value="http://......." />
+				<attribute name="Main-Class" value="com.mtx.tianxia.hacker.MTX_AttackWeblogic" />
+				<attribute name="Specification-Version" value="${PVer}" />
+				<attribute name="Implementation-Version" value="${PVer}" />
+				<attribute name="Build-Jdk" value="${JreVer}" />
+				<attribute name="Built-By" value="mtx_tianxia   ${TODAY}" />
+				<attribute name="Bundle-Version" value="${PVer} ${TODAY}" />
+			</manifest>
+		</jar>
+		<delete dir="${build}" />
+		<delete dir="bin/com" />
+	</target>
+</project>
