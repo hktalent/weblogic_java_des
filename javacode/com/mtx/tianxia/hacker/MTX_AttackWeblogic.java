@@ -586,8 +586,8 @@ public class MTX_AttackWeblogic extends InfoLog
 			// 为什么变成-1了
 			lE = (((lnTmp <<  (long)nW1) & lnTmp)  >> (long)nW1) & lnTmp;
 			lnIp = (lnIp >> nW << nW)  & lnTmp;
-			System.out.println(nW1);
-			System.out.println(lE);
+//			System.out.println(nW1);
+//			System.out.println(lE);
 		}
 		// 默认 192.168.10.0-240，192.168.10.2-6，格式
 		System.out.println(longToIp(lnIp) + " ... " + longToIp(lnIp + lE));
