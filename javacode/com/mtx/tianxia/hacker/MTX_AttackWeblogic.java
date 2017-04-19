@@ -77,8 +77,6 @@ public class MTX_AttackWeblogic extends InfoLog
 					 "cmd.exe /c echo %cd%",
 						"网络ip配置",
 						"cmd.exe /c ipconfig  /all",
-						"进程信息",
-						"tasklist",
 						"arp信息",
 						"cmd.exe /c arp -a",
 						"主机信息1",
