@@ -87,8 +87,8 @@
 		<delete file="${build}/build.xml" />
 		<delete file="${build}/Math.xml" />
 		<jar jarfile="${jaraName}" basedir="${build}" update="yes" level="9">
-			<zipfileset src="lib/WebLogic_EXP.jar" />
-			<zipfileset src="lib/SafeGene.jar" />
+			<zipfileset src="lib/x2.jar" />
+			<zipfileset src="lib/x1.jar" />
 			<manifest>
 				<attribute name="Bundle-Name" value="巅狼团队 mtx_tianxia" />
 				<attribute name="Created-By" value="巅狼团队 mtx_tianxia ${TODAY}" />
