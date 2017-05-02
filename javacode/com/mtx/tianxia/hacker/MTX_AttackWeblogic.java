@@ -651,7 +651,7 @@ public class MTX_AttackWeblogic extends InfoLog
 			{
 				ma.bInteractive = "-i".equalsIgnoreCase(args[1]);
 			}
-			String []a = getIps(args[0]).split(";"), ab;
+			String []a = getIps(args[0]).split("[;|,]"), ab;
 			for(int i = 0, j = a.length; i < j; i++)
 			{
 				ab = a[i].split(":");
