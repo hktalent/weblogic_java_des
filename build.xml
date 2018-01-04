@@ -32,7 +32,7 @@
 	<!-- 设定工程依赖的jar包 
 	-->
 	<path id="project.class.path">
-		<fileset file="/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/*.jar" />
+		<fileset file="/Library/Java/JavaVirtualMachines/jdk1.8.0_60.jdk/Contents/Home/jre/lib/*.jar" />
 		<fileset file="${lib}/*.jar" />
 	</path>
 

