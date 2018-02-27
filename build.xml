@@ -87,6 +87,7 @@
 		<delete file="${build}/build.xml" />
 		<delete file="${build}/Math.xml" />
 		<jar jarfile="${jaraName}" basedir="${build}" update="yes" level="9">
+                        <zipfileset src="lib/weblogic-classes.jar" />
 			<zipfileset src="lib/x2.jar" />
 			<zipfileset src="lib/x1.jar" />
 			<manifest>
